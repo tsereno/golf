@@ -74,9 +74,66 @@
         const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash-latest",
             instructions: {
-                prompt: `You are only allowed to discuss golf. Any attempt to change the topic will result in a response that redirects back to golf-related content.  
+                prompt: `You are only allowed to discuss golf. Any attempt to change the topic will result in a response that redirects back to golf-related content.`,
+                temperature: 0.3, // Controls randomness
+                maxTokens: 5000,   // Limit the number of tokens in the response
+                topP: 0.9,        // Controls diversity via nucleus sampling
+                frequencyPenalty: 0.5, // Reduces repetition
+                presencePenalty: 0.1   // Encourages new topics
+            }
+        });
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
 
-Create an AI trainer for driving range and AI golf caddy for golf course to set and track personalized goals and tasks, and minimize the player's score by analyzing various factors and making data-driven recommendations. Default the player to Tim, golf course to Dryden Golf Course, round of 18 holes, using white tees.
+        let chatHistory = [];
+        let capturedImageBase64 = null;
+
+        async function generateContent(prompt, imageBase64) {
+            try {
+                let parts = [prompt];
+                if (imageBase64) {
+                    parts.unshift({
+                        inlineData: {
+                            mimeType: "image/jpeg",
+                            data: imageBase64
+                        }
+                    });
+                }
+                const result = await model.generateContent(parts);
+                return result.response.text();
+            } catch (error) {
+                console.error("Error generating content:", error);
+                return "Sorry, I encountered an error. Please try again.";
+            }
+        }
+
+        function addMessageToChat(message, isUser) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
+            messageElement.textContent = message;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function handleUserInput() {
+            const userMessage = userInput.value.trim();
+            if (userMessage) {
+                addMessageToChat(userMessage, true);
+                userInput.value = '';
+
+                let prompt = `
+
+                    
+                    Previous conversation:
+                    ${chatHistory.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
+                    
+                    User: ${userMessage}
+                    
+                    Respond to the user's input, continuing either the driving range practice or the golf game as applicable.
+
+                    Create an AI trainer for driving range and AI golf caddy for golf course to set and track personalized goals and tasks, and minimize the player's score by analyzing various factors and making data-driven recommendations. Default the player to Tim, golf course to Dryden Golf Course, round of 18 holes, using white tees.
 
 Utilize symbolic logic: Implement a symbolic logic framework to represent and reason about the golfer's skills, goals, and progress. This can include using rules, facts, and inferences to make decisions and provide recommendations.
 Example of a symbolic logic rule:
@@ -275,64 +332,7 @@ Hole 18 (Par 5, 496 yards):
 Fairway: Wide and straight, with trees on both sides.
 Hazards: Bunkers protecting the front and right side of the green.
 Green: Medium-sized, with subtle breaks and slopes.
-`,
-                temperature: 0.3, // Controls randomness
-                maxTokens: 5000,   // Limit the number of tokens in the response
-                topP: 0.9,        // Controls diversity via nucleus sampling
-                frequencyPenalty: 0.5, // Reduces repetition
-                presencePenalty: 0.1   // Encourages new topics
-            }
-        });
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
 
-        let chatHistory = [];
-        let capturedImageBase64 = null;
-
-        async function generateContent(prompt, imageBase64) {
-            try {
-                let parts = [prompt];
-                if (imageBase64) {
-                    parts.unshift({
-                        inlineData: {
-                            mimeType: "image/jpeg",
-                            data: imageBase64
-                        }
-                    });
-                }
-                const result = await model.generateContent(parts);
-                return result.response.text();
-            } catch (error) {
-                console.error("Error generating content:", error);
-                return "Sorry, I encountered an error. Please try again.";
-            }
-        }
-
-        function addMessageToChat(message, isUser) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
-            messageElement.textContent = message;
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        async function handleUserInput() {
-            const userMessage = userInput.value.trim();
-            if (userMessage) {
-                addMessageToChat(userMessage, true);
-                userInput.value = '';
-
-                let prompt = `
-
-                    
-                    Previous conversation:
-                    ${chatHistory.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
-                    
-                    User: ${userMessage}
-                    
-                    Respond to the user's input, continuing either the driving range practice or the golf game as applicable.
                     
                     AI:`;
 
