@@ -74,92 +74,74 @@
           OBJECT: 'object',
         };
         
-        // Combined Schema for Driving Range and Golf Caddy Recommendations
-        const combinedSchema = {
-          description: "Combined Golf Session and Caddy Recommendations",
+        // Schema for Golf Caddy Recommendations
+        const golfCaddySchema = {
+          description: "Golf Caddy Course Recommendations",
           type: SchemaType.OBJECT,
           properties: {
-            sessionType: {
+            holeNumber: {
               type: SchemaType.STRING,
-              enum: ['drivingRange', 'golfCaddy'],
-              description: "Type of session: either 'drivingRange' for practice or 'golfCaddy' for course recommendations.",
+              description: "The hole number",
               nullable: false,
             },
-            sessionDetails: {
+            par: {
+              type: SchemaType.INTEGER,
+              description: "The par for the hole",
+              nullable: false,
+            },
+            distanceYards: {
+              type: SchemaType.INTEGER,
+              description: "Distance of the hole in yards",
+              nullable: false,
+            },
+            handicap: {
+              type: SchemaType.INTEGER,
+              description: "Distance remaining to the flag",
+              nullable: false,
+            },
+            distanceFlag: {
+              type: SchemaType.INTEGER,
+              description: "Distance of the hole in yards",
+              nullable: false,
+            },
+            recommendedClub: {
+              type: SchemaType.STRING,
+              description: "Recommended club for the hole",
+              nullable: false,
+            },
+            alternativeOptions: {
+              type: SchemaType.ARRAY,
+              items: {
+                type: SchemaType.OBJECT,
+                properties: {
+                  alternativeClub: {
+                    type: SchemaType.STRING,
+                    description: "Alternative club name",
+                    nullable: false,
+                  },
+                  explanation: {
+                    type: SchemaType.STRING,
+                    description: "Explanation for the alternative club choice",
+                    nullable: true,
+                  },
+                },
+                required: ["alternativeClub"],
+              },
+            },
+            insights: {
               type: SchemaType.OBJECT,
               properties: {
-                sessionNumber: {
-                  type: SchemaType.INTEGER,
-                  description: "Session number for tracking (for driving range only)",
-                  nullable: true,
-                },
-                date: {
-                  type: SchemaType.STRING,
-                  description: "Date of the session in YYYY-MM-DD format",
-                  nullable: false,
-                },
-                holeNumber: {
-                  type: SchemaType.STRING,
-                  description: "The hole number (for golf caddy recommendations only)",
-                  nullable: true,
-                },
-                par: {
-                  type: SchemaType.INTEGER,
-                  description: "The par for the hole (for golf caddy recommendations only)",
-                  nullable: true,
-                },
-                recommendedClub: {
-                  type: SchemaType.STRING,
-                  description: "Recommended club for the hole (for golf caddy recommendations only)",
-                  nullable: true,
-                },
-                focusAreas: {
-                  type: SchemaType.ARRAY,
-                  items: {
-                    type: SchemaType.STRING,
-                  },
-                  description: "Areas of focus during the session (for driving range only)",
-                },
-                drills: {
-                  type: SchemaType.ARRAY,
-                  items: {
-                    type: SchemaType.STRING,
-                  },
-                  description: "Drills performed during practice (for driving range only)",
-                },
-                alternativeOptions: {
-                  type: SchemaType.ARRAY,
-                  items: {
-                    type: SchemaType.OBJECT,
-                    properties: {
-                      alternativeClub: {
-                        type: SchemaType.STRING,
-                        description: "Alternative club name (for golf caddy recommendations only)",
-                        nullable: false,
-                      },
-                      explanation: {
-                        type: SchemaType.STRING,
-                        description: "Explanation for the alternative club choice (for golf caddy recommendations only)",
-                        nullable: true,
-                      },
-                    },
-                    required: ["alternativeClub"],
-                  },
-                },
-                insights: {
-                  type: SchemaType.OBJECT,
-                  properties: {
-                    analyze: { type: SchemaType.STRING, description: "Analysis for the hole (for golf caddy recommendations only)", nullable: true },
-                    distance: { type: SchemaType.STRING, description: "Distance insights (for golf caddy recommendations only)", nullable: true },
-                    execute: { type: SchemaType.STRING, description: "Execution advice (for golf caddy recommendations only)", nullable: true },
-                  },
-                },
+                analyze: { type: SchemaType.STRING, description: "Analysis for the hole", nullable: true },
+                correctTarget: { type: SchemaType.STRING, description: "Correct target area", nullable: true },
+                discipline: { type: SchemaType.STRING, description: "Discipline tips", nullable: true },
+                distance: { type: SchemaType.STRING, description: "Distance insights", nullable: true },
+                execute: { type: SchemaType.STRING, description: "Execution advice", nullable: true },
               },
-              required: ["date"],
             },
           },
-          required: ["sessionType", "sessionDetails"],
+          required: ["holeNumber", "par", "distanceYards", "handicap", "distanceFlag", "recommendedClub"],
         };
+
         // Chatbot setup
         const genAI = new GoogleGenerativeAI('AIzaSyB3lEhfhLyO35g1iHJrzESYRFugs7mZPhc');
         //const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"});
@@ -176,7 +158,7 @@
             },
             generationConfig: {
             responseMimeType: "application/json",
-            responseSchema: combinedSchema,
+            responseSchema: golfCaddySchema,
             },
         });
         const chatContainer = document.getElementById('chat-container');
