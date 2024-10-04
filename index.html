@@ -120,32 +120,31 @@
                 // Trim whitespace and check the content
                 const trimmedSection = section.trim();
                 if (trimmedSection) {
+                    // Add line breaks for better readability
+                    const formattedSection = trimmedSection.replace(/: /g, ':<br>')
+                        .replace(/\n/g, '<br>')  // Replace new lines with <br>
+                        .replace(/(?<=\d)\s*-\s*/g, '<br>') // Insert line breaks after numbers
+                        .replace(/(?<=\.\s)/g, '<br>'); // Insert line breaks after periods
+        
                     // Check for specific headers and apply formatting
                     if (trimmedSection.startsWith("Hole")) {
-                        output.push(`### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("INSIGHTS")) {
-                        output.push(`#### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("DECADE Framework")) {
-                        output.push(`#### ${trimmedSection}`);
+                        output.push(`### ${formattedSection}`);
+                    } else if (trimmedSection.startsWith("INSIGHTS") || trimmedSection.startsWith("DECADE Framework")) {
+                        output.push(`#### ${formattedSection}`);
                     } else if (trimmedSection.startsWith("Recommended Club")) {
-                        output.push(`### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("Alternative options")) {
-                        output.push(`#### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("Explanation")) {
-                        output.push(`### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("Symbolic Logic Explanation")) {
-                        output.push(`### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("Tim's Next Shot")) {
-                        output.push(`### ${trimmedSection}`);
-                    } else if (trimmedSection.startsWith("Key considerations for future shots")) {
-                        output.push(`#### ${trimmedSection}`);
+                        output.push(`### ${formattedSection}`);
+                    } else if (trimmedSection.startsWith("Alternative Options")) {
+                        output.push(`#### ${formattedSection}`);
                     } else {
                         // For other paragraphs, simply add them as regular text
-                        output.push(trimmedSection);
+                        output.push(formattedSection);
                     }
                 }
             });
         
+            // Join the formatted sections with new lines
+            return output.join('<br><br>');
+        }        
             // Join the formatted sections with new lines
             return output.join('\n\n');
         }
