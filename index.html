@@ -67,6 +67,13 @@
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai"
 
+        const SchemaType = {
+          STRING: 'string',
+          INTEGER: 'integer',
+          ARRAY: 'array',
+          OBJECT: 'object',
+        };
+        
         const schema = {
           description: "Golf Hole Details",
           type: SchemaType.OBJECT,
