@@ -227,15 +227,7 @@
                 return "Sorry, I encountered an error. Please try again.";
             }
         }
-       
-        const model = genAI.getGenerativeModel({
-          model: "gemini-1.5-pro",
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: schema,
-          },
-        });
-        
+               
         function addMessageToChat(message, isUser) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
