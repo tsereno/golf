@@ -91,17 +91,17 @@
             },
             distanceYards: {
               type: SchemaType.INTEGER,
-              description: "Distance of the hole in yards",
+              description: "Total hole distance from the tee",
               nullable: false,
             },
             handicap: {
               type: SchemaType.INTEGER,
-              description: "Distance remaining to the flag",
+              description: "The handicap of the hole",
               nullable: false,
             },
             distanceFlag: {
               type: SchemaType.INTEGER,
-              description: "Distance of the hole in yards",
+              description: "Distance remaining to the flag",
               nullable: false,
             },
             recommendedClub: {
@@ -111,7 +111,7 @@
             },
             scorecard: {
               type: SchemaType.STRING,
-              description: "Detailed scorecard for each hole played with Score, Putts, Score Term, GIR Hit, Fairway Hit, Hazard Hit",
+              description: "Detailed scorecard for each player and each hole played, with Score, Putts, Score Term, GIR Hit, Fairway Hit, Hazard Hit",
               nullable: false,
             },
             alternativeOptions: {
@@ -144,7 +144,7 @@
               },
             },
           },
-          required: ["holeNumber", "par", "distanceYards", "handicap", "distanceFlag", "recommendedClub"],
+          required: ["holeNumber", "par", "distanceYards", "handicap", "distanceFlag", "recommendedClub", "scorecard"],
         };
 
         // Chatbot setup
