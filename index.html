@@ -95,8 +95,7 @@
                 },
                 date: {
                   type: SchemaType.STRING,
-                  description: "Date of the session",
-                  format: "date",
+                  description: "Date of the session in YYYY-MM-DD format",
                   nullable: false,
                 },
                 holeNumber: {
@@ -161,7 +160,6 @@
           },
           required: ["sessionType", "sessionDetails"],
         };
-
         // Chatbot setup
         const genAI = new GoogleGenerativeAI('AIzaSyB3lEhfhLyO35g1iHJrzESYRFugs7mZPhc');
         //const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"});
