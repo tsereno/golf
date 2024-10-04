@@ -138,8 +138,8 @@ Rule: IF golfer's accuracy is below average AND goal is to improve accuracy THEN
 
                 const aiResponse = await generateContent(prompt);
                 addMessageToChat(aiResponse, false);
-                //chatHistory.push({ role: "user", content: userMessage });
-                //chatHistory.push({ role: "ai", content: aiResponse });
+                chatHistory.push({ role: "user", content: userMessage });
+                chatHistory.push({ role: "ai", content: aiResponse });
             }
         }
 
@@ -152,8 +152,8 @@ Rule: IF golfer's accuracy is below average AND goal is to improve accuracy THEN
 
         // Initial message
         generateContent(``).then(response => {
-            addMessageToChat(response, false);
-            chatHistory.push({ role: "ai", content: response });
+            //addMessageToChat(response, false);
+            //chatHistory.push({ role: "ai", content: response });
         });
 
         // Image Capture setup
