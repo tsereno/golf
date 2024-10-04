@@ -67,6 +67,122 @@
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai"
 
+        const schema = {
+          description: "Golf Hole Details",
+          type: SchemaType.OBJECT,
+          properties: {
+            holeNumber: {
+              type: SchemaType.STRING,
+              description: "The hole number",
+              nullable: false,
+            },
+            par: {
+              type: SchemaType.INTEGER,
+              description: "The par for the hole",
+              nullable: false,
+            },
+            distanceYards: {
+              type: SchemaType.INTEGER,
+              description: "Distance of the hole in yards",
+              nullable: false,
+            },
+            handicap: {
+              type: SchemaType.INTEGER,
+              description: "Handicap rating for the hole",
+              nullable: false,
+            },
+            shot: {
+              type: SchemaType.INTEGER,
+              description: "Shot number",
+              nullable: false,
+            },
+            teeShot: {
+              type: SchemaType.STRING,
+              description: "Details about the tee shot",
+              nullable: true,
+            },
+            clubs: {
+              type: SchemaType.ARRAY,
+              items: {
+                type: SchemaType.OBJECT,
+                properties: {
+                  clubName: {
+                    type: SchemaType.STRING,
+                    description: "Name of the club",
+                    nullable: false,
+                  },
+                  distanceAchieved: {
+                    type: SchemaType.STRING,
+                    description: "Distance achieved with the club",
+                    nullable: false,
+                  },
+                },
+                required: ["clubName", "distanceAchieved"],
+              },
+            },
+            insights: {
+              type: SchemaType.OBJECT,
+              properties: {
+                distance: {
+                  type: SchemaType.STRING,
+                  description: "Distance insights",
+                  nullable: true,
+                },
+                expectation: {
+                  type: SchemaType.STRING,
+                  description: "Expectations for the hole",
+                  nullable: true,
+                },
+                correctTarget: {
+                  type: SchemaType.STRING,
+                  description: "Correct target area",
+                  nullable: true,
+                },
+                analyze: {
+                  type: SchemaType.STRING,
+                  description: "Analysis for the hole",
+                  nullable: true,
+                },
+                discipline: {
+                  type: SchemaType.STRING,
+                  description: "Discipline tips",
+                  nullable: true,
+                },
+                execute: {
+                  type: SchemaType.STRING,
+                  description: "Execution advice",
+                  nullable: true,
+                },
+              },
+            },
+            recommendedClub: {
+              type: SchemaType.STRING,
+              description: "Recommended club for the hole",
+              nullable: false,
+            },
+            alternativeOptions: {
+              type: SchemaType.ARRAY,
+              items: {
+                type: SchemaType.OBJECT,
+                properties: {
+                  alternativeClub: {
+                    type: SchemaType.STRING,
+                    description: "Alternative club name",
+                    nullable: false,
+                  },
+                  explanation: {
+                    type: SchemaType.STRING,
+                    description: "Explanation for the alternative",
+                    nullable: true,
+                  },
+                },
+                required: ["alternativeClub"],
+              },
+            },
+          },
+          required: ["holeNumber", "par", "distanceYards", "handicap", "shot", "clubs", "recommendedClub"],
+        };
+
         // Chatbot setup
         const genAI = new GoogleGenerativeAI('AIzaSyB3lEhfhLyO35g1iHJrzESYRFugs7mZPhc');
         //const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"});
@@ -80,7 +196,11 @@
                 topP: 0.9,        // Controls diversity via nucleus sampling
                 frequencyPenalty: 0.5, // Reduces repetition
                 presencePenalty: 0.1   // Encourages new topics
-            }
+            },
+            generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: schema,
+            },
         });
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
@@ -107,50 +227,20 @@
                 return "Sorry, I encountered an error. Please try again.";
             }
         }
-
-        function prettyPrintGolfInfo(text) {
-            // Split the text into sections based on common headers
-            const sections = text.split(/\*\*\*\s*|\*\*\s*|\*\s*/).filter(Boolean);
-        
-            // Initialize an output array to collect formatted sections
-            let output = [];
-        
-            // Process each section
-            sections.forEach(section => {
-                // Trim whitespace and check the content
-                const trimmedSection = section.trim();
-                if (trimmedSection) {
-                    // Add line breaks for better readability
-                    const formattedSection = trimmedSection.replace(/: /g, ':<br>')
-                        .replace(/\n/g, '<br>')  // Replace new lines with <br>
-                        .replace(/(?<=\d)\s*-\s*/g, '<br>') // Insert line breaks after numbers
-                        .replace(/(?<=\.\s)/g, '<br>'); // Insert line breaks after periods
-        
-                    // Check for specific headers and apply formatting
-                    if (trimmedSection.startsWith("Hole")) {
-                        output.push(`### ${formattedSection}`);
-                    } else if (trimmedSection.startsWith("INSIGHTS") || trimmedSection.startsWith("DECADE Framework")) {
-                        output.push(`#### ${formattedSection}`);
-                    } else if (trimmedSection.startsWith("Recommended Club")) {
-                        output.push(`### ${formattedSection}`);
-                    } else if (trimmedSection.startsWith("Alternative Options")) {
-                        output.push(`#### ${formattedSection}`);
-                    } else {
-                        // For other paragraphs, simply add them as regular text
-                        output.push(formattedSection);
-                    }
-                }
-            });
-        
-            // Join the formatted sections with new lines
-            return output.join('<br><br>');
-        }        
+       
+        const model = genAI.getGenerativeModel({
+          model: "gemini-1.5-pro",
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: schema,
+          },
+        });
         
         function addMessageToChat(message, isUser) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
             messageElement.classList.add(isUser ? 'user-message' : 'ai-message');            
-            messageElement.textContent = prettyPrintGolfInfo(message);
+            messageElement.textContent = (message);
             chatContainer.appendChild(messageElement);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
