@@ -108,11 +108,53 @@
             }
         }
 
+        function prettyPrintGolfInfo(text) {
+            // Split the text into sections based on common headers
+            const sections = text.split(/\*\*\*\s*|\*\*\s*|\*\s*/).filter(Boolean);
+        
+            // Initialize an output array to collect formatted sections
+            let output = [];
+        
+            // Process each section
+            sections.forEach(section => {
+                // Trim whitespace and check the content
+                const trimmedSection = section.trim();
+                if (trimmedSection) {
+                    // Check for specific headers and apply formatting
+                    if (trimmedSection.startsWith("Hole")) {
+                        output.push(`### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("INSIGHTS")) {
+                        output.push(`#### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("DECADE Framework")) {
+                        output.push(`#### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("Recommended Club")) {
+                        output.push(`### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("Alternative options")) {
+                        output.push(`#### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("Explanation")) {
+                        output.push(`### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("Symbolic Logic Explanation")) {
+                        output.push(`### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("Tim's Next Shot")) {
+                        output.push(`### ${trimmedSection}`);
+                    } else if (trimmedSection.startsWith("Key considerations for future shots")) {
+                        output.push(`#### ${trimmedSection}`);
+                    } else {
+                        // For other paragraphs, simply add them as regular text
+                        output.push(trimmedSection);
+                    }
+                }
+            });
+        
+            // Join the formatted sections with new lines
+            return output.join('\n\n');
+        }
+        
         function addMessageToChat(message, isUser) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
-            messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
-            messageElement.textContent = message;
+            messageElement.classList.add(isUser ? 'user-message' : 'ai-message');            
+            messageElement.textContent = prettyPrintGolfInfo(message);
             chatContainer.appendChild(messageElement);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
