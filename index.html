@@ -128,7 +128,7 @@
 
                 const aiResponse = await generateContent(prompt);
                 addMessageToChat(aiResponse, false);
-                chatHistory.push({ role: "user", content: userMessage });
+                //chatHistory.push({ role: "user", content: userMessage });
                 chatHistory.push({ role: "ai", content: aiResponse });
             }
         }
