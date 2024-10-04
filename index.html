@@ -109,6 +109,11 @@
               description: "Recommended club for the hole",
               nullable: false,
             },
+            scorecard: {
+              type: SchemaType.STRING,
+              description: "Detailed scorecard with Score, Putts, Score Term, GIR Hit, Fairway Hit, Hazard Hit",
+              nullable: false,
+            },
             alternativeOptions: {
               type: SchemaType.ARRAY,
               items: {
