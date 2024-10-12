@@ -19,16 +19,18 @@
 
     <script type="module">
         import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+        
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
-
+        
         let conversationHistory = [];
-
+        let generateText;
+        
         async function initializePipeline() {
-            pipeline = await window.pipeline('text-generation', 'microsoft/phi-2');
+            generateText = await pipeline('text-generation', 'microsoft/phi-2');
         }
-
+        
         function addMessage(role, content) {
             const messageElement = document.createElement('p');
             messageElement.innerHTML = `<strong>${role}:</strong> ${content}`;
@@ -36,17 +38,17 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             conversationHistory.push({ role, content });
         }
-
+        
         async function generateResponse(userMessage) {
             const prompt = conversationHistory.map(msg => `${msg.role}: ${msg.content}`).join('\n') + '\nAI:';
-            const result = await pipeline(prompt, {
+            const result = await generateText(prompt, {
                 max_new_tokens: 100,
                 temperature: 0.7,
                 repetition_penalty: 1.1
             });
             return result[0].generated_text.split('AI:').pop().trim();
         }
-
+        
         async function handleUserInput() {
             const userMessage = userInput.value.trim();
             if (userMessage) {
@@ -57,12 +59,12 @@
                 addMessage('AI', aiResponse);
             }
         }
-
+        
         sendButton.addEventListener('click', handleUserInput);
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleUserInput();
         });
-
+        
         initializePipeline().then(() => {
             addMessage('System', 'Chat initialized. You can start the conversation!');
         });
