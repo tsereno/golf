@@ -32,7 +32,7 @@ let generateText;
 
 async function initializePipeline() {
     // Download and load the model
-    generateText = await pipeline('text-generation', 'microsoft/phi-2', {
+    generateText = await pipeline('text-generation', 'Xenova/distilgpt2', {
         quantized: false, // Set to true if you want to use a quantized version
     });
     addMessage('System', 'Model loaded. You can start the conversation!');
