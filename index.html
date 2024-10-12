@@ -20,8 +20,9 @@
     <script type="module">
 import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
 
-// Enable local mode
+// Enable local mode and specify a custom cache directory
 env.allowLocalModels = true;
+env.localModelPath = './models'; // This will store models in a 'models' folder in your current directory
 
 const chatContainer = document.getElementById('chat-container');
 const userInput = document.getElementById('user-input');
@@ -31,10 +32,13 @@ let conversationHistory = [];
 let generateText;
 
 async function initializePipeline() {
+    addMessage('System', 'Downloading and initializing the model. This may take a few minutes...');
+    
     // Download and load the model
-    generateText = await pipeline('text-generation', 'Xenova/distilgpt2', {
-        quantized: false, // Set to true if you want to use a quantized version
+    generateText = await pipeline('text-generation', 'distilgpt2', {
+        quantized: false,
     });
+    
     addMessage('System', 'Model loaded. You can start the conversation!');
 }
 
@@ -77,9 +81,7 @@ userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleUserInput();
 });
 
-initializePipeline().then(() => {
-    addMessage('System', 'Initializing the model. This may take a few minutes...');
-});
+initializePipeline();
     </script>
 </body>
 </html>
